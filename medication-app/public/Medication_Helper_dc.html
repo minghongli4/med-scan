@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{font-family:'Nunito',system-ui,sans-serif;background:#dfe7e3;color:#15241e;display:flex;justify-content:center;min-height:100vh}
+  @keyframes mh-spin{to{transform:rotate(360deg)}}
+  @keyframes mh-fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @keyframes mh-dot{0%,80%,100%{opacity:.25}40%{opacity:1}}
+  @keyframes mh-pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+  button{font-family:inherit;cursor:pointer}
+  ::-webkit-scrollbar{width:0}
+</style>
+</helmet>
+<div style="width:100%;max-width:430px;height:100vh;background:#f6faf8;display:flex;flex-direction:column;box-shadow:0 0 60px rgba(20,50,40,.12);overflow:hidden">
+<div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column">
+
+  <!-- ============ HOME ============ -->
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:1;display:flex;flex-direction:column;padding:32px 26px 30px;animation:mh-fade .4s ease">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:auto">
+      <div style="width:34px;height:34px;border-radius:10px;background:#1e8466;display:flex;align-items:center;justify-content:center">
+        <div style="position:relative;width:16px;height:16px">
+          <div style="position:absolute;top:6px;left:0;width:16px;height:4px;border-radius:2px;background:#fff"></div>
+          <div style="position:absolute;left:6px;top:0;width:4px;height:16px;border-radius:2px;background:#fff"></div>
+        </div>
+      </div>
+      <span style="font-weight:800;font-size:17px;color:#1e8466;letter-spacing:.2px">Medication Helper</span>
+    </div>
+
+    <div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin:18px 0 auto">
+      <div style="width:128px;height:128px;border-radius:36px;background:#e3f3ec;display:flex;align-items:center;justify-content:center;margin-bottom:30px;box-shadow:inset 0 0 0 2px #cfeadf">
+        <div style="position:relative;width:54px;height:54px">
+          <div style="position:absolute;top:21px;left:0;width:54px;height:14px;border-radius:7px;background:#1e8466"></div>
+          <div style="position:absolute;left:21px;top:0;width:14px;height:54px;border-radius:7px;background:#1e8466"></div>
+        </div>
+      </div>
+      <h1 style="font-size:34px;line-height:1.15;font-weight:900;margin:0 0 14px;letter-spacing:-.5px">Medication Helper</h1>
+      <p style="font-size:20px;line-height:1.5;color:#3c544b;margin:0;max-width:300px">Scan your prescription and get simple, clear instructions.</p>
+    </div>
+
+    <button onClick="{{ goScan }}" style="margin-top:34px;width:100%;min-height:66px;border:none;border-radius:18px;background:#1e8466;color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 10px 22px rgba(30,132,102,.32)" style-active="transform:scale(.98)">
+      <span style="position:relative;width:24px;height:24px;display:inline-flex">
+        <span style="position:absolute;inset:3px 0 7px;border:3px solid #fff;border-radius:6px"></span>
+        <span style="position:absolute;left:7px;top:7px;width:10px;height:10px;border:3px solid #fff;border-radius:50%"></span>
+      </span>
+      Scan Prescription
+    </button>
+
+    <button onClick="{{ goReminders }}" style="margin-top:12px;width:100%;min-height:60px;border:2px solid #cfeadf;border-radius:18px;background:#fff;color:#1e8466;font-size:19px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px" style-active="transform:scale(.98)">
+      <span style="position:relative;width:20px;height:20px;display:inline-flex">
+        <span style="position:absolute;inset:0;border:2.5px solid #1e8466;border-radius:50%"></span>
+        <span style="position:absolute;left:9px;top:5px;width:2.5px;height:6px;border-radius:2px;background:#1e8466"></span>
+        <span style="position:absolute;left:9px;top:9px;width:5px;height:2.5px;border-radius:2px;background:#1e8466"></span>
+      </span>
+      Today's Reminders
+    </button>
+
+    <div style="margin-top:16px;display:flex;gap:11px;align-items:flex-start;background:#fff;border:1.5px solid #e7efeb;border-radius:16px;padding:15px 16px">
+      <div style="flex:none;width:24px;height:24px;border-radius:50%;background:#eaf4f0;color:#1e8466;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;margin-top:1px">i</div>
+      <p style="margin:0;font-size:15px;line-height:1.5;color:#5a6f67">AI helps simplify medical information but does <b style="color:#3c544b">not replace</b> your doctor or pharmacist.</p>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ SCAN ============ -->
+  <sc-if value="{{ isScan }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;display:flex;flex-direction:column;padding:20px 26px 28px;animation:mh-fade .4s ease">
+    <button onClick="{{ goHome }}" style="align-self:flex-start;border:none;background:none;padding:8px 0;font-size:17px;font-weight:700;color:#1e8466;display:flex;align-items:center;gap:7px">
+      <span style="display:inline-block;width:11px;height:11px;border-left:3px solid #1e8466;border-bottom:3px solid #1e8466;transform:rotate(45deg)"></span>
+      Back
+    </button>
+    <h1 style="font-size:28px;font-weight:900;margin:14px 0 8px;letter-spacing:-.3px">Scan Prescription</h1>
+    <p style="font-size:19px;line-height:1.5;color:#3c544b;margin:0 0 22px">Take a photo of your prescription or medicine bag.</p>
+
+    <label style="display:block;cursor:pointer">
+      <input type="file" accept="image/*" capture="environment" onChange="{{ onFile }}" style="display:none">
+      <sc-if value="{{ noImg }}" hint-placeholder-val="{{ true }}">
+      <div style="border:3px dashed #bcd9cd;border-radius:24px;background:#eef7f3;padding:44px 22px;display:flex;flex-direction:column;align-items:center;text-align:center">
+        <div style="width:92px;height:92px;border-radius:26px;background:#fff;display:flex;align-items:center;justify-content:center;margin-bottom:20px;box-shadow:0 6px 16px rgba(30,132,102,.12)">
+          <span style="position:relative;width:46px;height:38px;display:inline-flex">
+            <span style="position:absolute;inset:6px 0 0;border:3.5px solid #1e8466;border-radius:9px"></span>
+            <span style="position:absolute;top:0;left:12px;width:18px;height:10px;border:3.5px solid #1e8466;border-bottom:none;border-radius:6px 6px 0 0;background:#eef7f3"></span>
+            <span style="position:absolute;left:14px;top:14px;width:16px;height:16px;border:3.5px solid #1e8466;border-radius:50%"></span>
+          </span>
+        </div>
+        <p style="margin:0 0 22px;font-size:17px;color:#5a6f67;line-height:1.4;max-width:240px">Tap below to use your camera or choose a photo from your phone.</p>
+        <div style="min-height:58px;padding:0 30px;border-radius:15px;background:#1e8466;color:#fff;font-size:19px;font-weight:800;display:flex;align-items:center;gap:10px">Upload Image</div>
+      </div>
+      </sc-if>
+      <sc-if value="{{ hasImg }}" hint-placeholder-val="{{ false }}">
+      <div style="border-radius:24px;overflow:hidden;position:relative;border:3px solid #cfeadf;animation:mh-fade .35s ease">
+        {{ previewImg }}
+        <div style="position:absolute;bottom:12px;right:12px;background:rgba(20,40,32,.78);color:#fff;font-size:14px;font-weight:700;padding:7px 13px;border-radius:11px;display:flex;align-items:center;gap:7px">
+          <span style="width:14px;height:8px;border-left:3px solid #fff;border-bottom:3px solid #fff;transform:rotate(-45deg);display:inline-block"></span>Photo ready · tap to retake
+        </div>
+      </div>
+      </sc-if>
+    </label>
+
+    <sc-if value="{{ hasImg }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ analyze }}" style="margin-top:auto;width:100%;min-height:66px;border:none;border-radius:18px;background:#1e8466;color:#fff;font-size:21px;font-weight:800;box-shadow:0 10px 22px rgba(30,132,102,.32);animation:mh-fade .3s ease" style-active="transform:scale(.98)">Analyze Prescription</button>
+    </sc-if>
+    <sc-if value="{{ noImg }}" hint-placeholder-val="{{ true }}">
+    <div style="margin-top:auto;display:flex;align-items:center;gap:9px;justify-content:center;color:#8aa097;font-size:15px;font-weight:600;padding-top:22px">
+      <span style="width:9px;height:9px;border-radius:50%;background:#cdded7"></span>Add a photo to continue
+    </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ============ LOADING ============ -->
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 30px;text-align:center;animation:mh-fade .4s ease">
+    <div style="position:relative;width:96px;height:96px;margin-bottom:34px">
+      <div style="position:absolute;inset:0;border-radius:50%;border:7px solid #e3f0ec"></div>
+      <div style="position:absolute;inset:0;border-radius:50%;border:7px solid transparent;border-top-color:#1e8466;animation:mh-spin 1s linear infinite"></div>
+      <div style="position:absolute;inset:26px;border-radius:13px;background:#1e8466"></div>
+    </div>
+    <h2 style="font-size:25px;font-weight:900;margin:0 0 30px">AI is reading your prescription…</h2>
+    <div style="display:flex;flex-direction:column;gap:16px;width:100%;max-width:300px;text-align:left">
+      <sc-for list="{{ steps }}" as="step" hint-placeholder-count="3">
+      <div style="display:flex;align-items:center;gap:14px;font-size:18px;font-weight:700;color:{{ step.color }}">
+        <span style="flex:none;width:30px;height:30px;border-radius:50%;background:{{ step.bg }};display:flex;align-items:center;justify-content:center">
+          <sc-if value="{{ step.done }}" hint-placeholder-val="{{ false }}">
+            <span style="width:13px;height:8px;border-left:3px solid #fff;border-bottom:3px solid #fff;transform:rotate(-45deg);display:inline-block;margin-top:-2px"></span>
+          </sc-if>
+          <sc-if value="{{ step.active }}" hint-placeholder-val="{{ false }}">
+            <span style="width:11px;height:11px;border-radius:50%;border:3px solid #fff;border-top-color:transparent;animation:mh-spin .8s linear infinite"></span>
+          </sc-if>
+        </span>
+        {{ step.label }}
+      </div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ RESULTS ============ -->
+  <sc-if value="{{ isResults }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;display:flex;flex-direction:column;animation:mh-fade .4s ease">
+
+    <sc-if value="{{ apiError }}" hint-placeholder-val="{{ false }}">
+    <div style="margin:16px 22px 0;padding:13px 16px;background:#fff8ec;border:1.5px solid #f0c060;border-radius:14px;display:flex;align-items:flex-start;gap:10px">
+      <span style="flex:none;width:22px;height:22px;border-radius:50%;background:#f0c060;color:#7a4f00;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:1px">!</span>
+      <div>
+        <div style="font-size:15px;font-weight:800;color:#7a4f00;margin-bottom:2px">AI 分析失敗，顯示範例資料</div>
+        <div style="font-size:13px;color:#a07030;line-height:1.4">{{ apiError }}</div>
+      </div>
+    </div>
+    </sc-if>
+
+    <div style="padding:24px 26px 20px;background:#eaf4f0;border-bottom:1.5px solid #dceae4">
+      <div style="display:flex;align-items:center;gap:8px;color:#1e8466;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">
+        <span style="width:18px;height:18px;border-radius:50%;background:#1e8466;display:inline-flex;align-items:center;justify-content:center"><span style="width:9px;height:6px;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(-45deg);margin-top:-1px"></span></span>
+        Simplified for you
+      </div>
+      <h1 style="font-size:28px;font-weight:900;margin:0 0 4px">Your Medications</h1>
+      <p style="margin:0;font-size:17px;color:#4a615a">{{ medCountLabel }}</p>
+    </div>
+
+    <div style="padding:22px 22px 8px;display:flex;flex-direction:column;gap:26px">
+      <sc-for list="{{ groups }}" as="group" hint-placeholder-count="2">
+      <div style="display:flex;gap:14px">
+        <div style="flex:none;display:flex;flex-direction:column;align-items:center">
+          <div style="width:48px;height:48px;border-radius:16px;background:{{ group.badgeBg }};display:flex;align-items:center;justify-content:center">
+            <sc-if value="{{ group.isMorning }}" hint-placeholder-val="{{ true }}">
+              <span style="position:relative;width:24px;height:24px;display:inline-block">
+                <span style="position:absolute;left:6px;top:6px;width:12px;height:12px;border-radius:50%;background:#e6912b"></span>
+                <span style="position:absolute;left:11px;top:0;width:2px;height:4px;border-radius:2px;background:#e6912b"></span>
+                <span style="position:absolute;left:11px;bottom:0;width:2px;height:4px;border-radius:2px;background:#e6912b"></span>
+                <span style="position:absolute;top:11px;left:0;width:4px;height:2px;border-radius:2px;background:#e6912b"></span>
+                <span style="position:absolute;top:11px;right:0;width:4px;height:2px;border-radius:2px;background:#e6912b"></span>
+              </span>
+            </sc-if>
+            <sc-if value="{{ group.isEvening }}" hint-placeholder-val="{{ false }}">
+              <span style="position:relative;width:24px;height:24px;display:inline-block;overflow:hidden">
+                <span style="position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#5b6bb0"></span>
+                <span style="position:absolute;left:10px;top:-1px;width:18px;height:18px;border-radius:50%;background:#e7eaf6"></span>
+              </span>
+            </sc-if>
+          </div>
+          <div style="flex:1;width:3px;background:#e0ece7;margin-top:6px;border-radius:2px;min-height:14px"></div>
+        </div>
+        <div style="flex:1;min-width:0;padding-bottom:6px">
+          <div style="margin-bottom:12px">
+            <div style="font-size:22px;font-weight:900;line-height:1.1">{{ group.time }}</div>
+            <div style="font-size:15px;color:#7a8e86;font-weight:600">{{ group.sub }}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <sc-for list="{{ group.meds }}" as="med" hint-placeholder-count="1">
+            <div style="background:#fff;border:1.5px solid #e7efeb;border-radius:20px;padding:18px;box-shadow:0 6px 16px rgba(20,50,40,.05)">
+              <div style="display:flex;align-items:flex-start;gap:13px">
+                <sc-if value="{{ med.isTablet }}" hint-placeholder-val="{{ true }}">
+                  <div style="flex:none;width:54px;height:54px;border-radius:15px;background:#eef3f1;display:flex;align-items:center;justify-content:center">
+                    <div style="position:relative;width:32px;height:32px;border-radius:50%;background:#fff;border:2px solid #d2dcd7;box-shadow:0 1px 2px rgba(0,0,0,.06)">
+                      <div style="position:absolute;left:50%;top:6px;bottom:6px;width:2px;background:#d2dcd7;transform:translateX(-50%)"></div>
+                    </div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ med.isCapsule }}" hint-placeholder-val="{{ false }}">
+                  <div style="flex:none;width:54px;height:54px;border-radius:15px;background:#eef3f1;display:flex;align-items:center;justify-content:center">
+                    <div style="width:40px;height:17px;border-radius:9px;overflow:hidden;display:flex;border:1.5px solid #d2dcd7;transform:rotate(-25deg);box-shadow:0 1px 2px rgba(0,0,0,.06)">
+                      <div style="flex:1;background:#e8975a"></div>
+                      <div style="flex:1;background:#fff"></div>
+                    </div>
+                  </div>
+                </sc-if>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:22px;font-weight:900;line-height:1.15">{{ med.name }}</div>
+                  <div style="font-size:16px;color:#7a8e86;font-weight:700;margin-top:2px">{{ med.when }}</div>
+                </div>
+                <div style="flex:none;background:#eaf4f0;color:#1e8466;font-weight:800;font-size:16px;padding:7px 13px;border-radius:11px">{{ med.dosage }}</div>
+              </div>
+
+              <div style="margin-top:14px;background:#f4faf7;border-radius:14px;padding:14px 15px">
+                <div style="font-size:13px;font-weight:800;color:#1e8466;text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">What this means</div>
+                <p style="margin:0;font-size:19px;line-height:1.45;color:#23352e;font-weight:600">{{ med.simple }}</p>
+              </div>
+
+              <button onClick="{{ med.onSpeak }}" style="margin-top:14px;width:100%;min-height:52px;border:2px solid #cfeadf;background:#fff;border-radius:14px;color:#1e8466;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px" style-active="transform:scale(.98)">
+                <sc-if value="{{ med.speaking }}" hint-placeholder-val="{{ false }}">
+                  <span style="display:flex;align-items:center;gap:4px">
+                    <span style="width:5px;height:14px;border-radius:3px;background:#1e8466;animation:mh-dot 1s infinite"></span>
+                    <span style="width:5px;height:20px;border-radius:3px;background:#1e8466;animation:mh-dot 1s infinite .15s"></span>
+                    <span style="width:5px;height:11px;border-radius:3px;background:#1e8466;animation:mh-dot 1s infinite .3s"></span>
+                  </span>
+                  Reading aloud…
+                </sc-if>
+                <sc-if value="{{ med.idle }}" hint-placeholder-val="{{ true }}">
+                  <span style="position:relative;width:20px;height:18px;display:inline-flex">
+                    <span style="position:absolute;left:0;top:5px;width:7px;height:8px;background:#1e8466"></span>
+                    <span style="position:absolute;left:5px;top:0;width:0;height:0;border-top:9px solid transparent;border-bottom:9px solid transparent;border-right:9px solid #1e8466"></span>
+                    <span style="position:absolute;right:0;top:3px;width:6px;height:12px;border:2px solid #1e8466;border-left:none;border-radius:0 7px 7px 0"></span>
+                  </span>
+                  Read aloud
+                </sc-if>
+              </button>
+
+              <div style="margin-top:13px;display:flex;gap:9px;align-items:flex-start">
+                <span style="flex:none;width:20px;height:20px;border-radius:50%;background:#fff4e3;color:#c77b18;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:1px">!</span>
+                <p style="margin:0;font-size:14.5px;line-height:1.45;color:#8a6a3a">{{ med.confidence }}</p>
+              </div>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-for>
+    </div>
+
+    <div style="padding:8px 22px 0">
+      <button onClick="{{ toggleOcr }}" style="width:100%;background:#fff;border:1.5px solid #e7efeb;border-radius:16px;padding:16px 17px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <span style="display:flex;align-items:center;gap:11px">
+          <span style="width:34px;height:34px;border-radius:10px;background:#f0f3f2;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:0 8px">
+            <span style="height:2.5px;background:#9fb0a9;border-radius:2px"></span>
+            <span style="height:2.5px;background:#9fb0a9;border-radius:2px;width:70%"></span>
+            <span style="height:2.5px;background:#9fb0a9;border-radius:2px;width:85%"></span>
+          </span>
+          <span style="text-align:left">
+            <span style="display:block;font-size:17px;font-weight:800;color:#23352e">Original prescription text</span>
+            <span style="display:block;font-size:14px;color:#8aa097;font-weight:600">See exactly what we read</span>
+          </span>
+        </span>
+        <span style="flex:none;width:12px;height:12px;border-right:3px solid #7a8e86;border-bottom:3px solid #7a8e86;transition:transform .25s;transform:{{ ocrCaret }}"></span>
+      </button>
+      <sc-if value="{{ ocrOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:10px;background:#23352e;border-radius:16px;padding:18px;animation:mh-fade .3s ease">
+        <div style="font-size:12px;color:#7fa394;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Raw scan · OCR</div>
+        <pre style="margin:0;white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13.5px;line-height:1.7;color:#d6e4dd">{{ ocrText }}</pre>
+      </div>
+      </sc-if>
+    </div>
+
+    <div style="padding:18px 22px 6px;display:flex;align-items:flex-start;gap:11px;color:#5a6f67;font-size:14px;line-height:1.5">
+      <span style="flex:none;width:22px;height:22px;border-radius:50%;background:#eaf4f0;color:#1e8466;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:1px">i</span>
+      <span>This is an AI summary to help you understand your medicine. Always follow your doctor's or pharmacist's directions.</span>
+    </div>
+
+    <div style="padding:8px 22px 22px;display:flex;flex-direction:column;gap:10px">
+      <button onClick="{{ goReminders }}" style="width:100%;min-height:60px;border:none;border-radius:18px;background:#1e8466;color:#fff;font-size:19px;font-weight:800;box-shadow:0 8px 18px rgba(30,132,102,.28)" style-active="transform:scale(.98)">Add to My Reminders</button>
+      <button onClick="{{ reset }}" style="width:100%;min-height:56px;border:2px solid #cfeadf;border-radius:18px;background:#fff;color:#1e8466;font-size:18px;font-weight:800" style-active="transform:scale(.98)">Scan Another Prescription</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ REMINDERS ============ -->
+  <sc-if value="{{ isReminders }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;display:flex;flex-direction:column;animation:mh-fade .4s ease">
+    <div style="padding:26px 26px 22px;background:#eaf4f0;border-bottom:1.5px solid #dceae4">
+      <div style="font-size:14px;font-weight:800;color:#1e8466;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Today · {{ todayDate }}</div>
+      <h1 style="font-size:28px;font-weight:900;margin:0 0 14px">Medication Schedule</h1>
+      <div style="display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:13px 15px;border:1.5px solid #dceae4">
+        <div style="position:relative;width:42px;height:42px;flex:none">
+          <div style="position:absolute;inset:0;border-radius:50%;border:5px solid #e3f0ec"></div>
+          <div style="position:absolute;inset:0;border-radius:50%;border:5px solid transparent;border-top-color:#1e8466;border-right-color:{{ progressRightColor }};transform:rotate(-45deg)"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#1e8466">{{ takenLabel }}</div>
+        </div>
+        <div>
+          <div style="font-size:17px;font-weight:800;color:#23352e">{{ progressTitle }}</div>
+          <div style="font-size:14px;color:#7a8e86;font-weight:600">Confirm each dose with a quick photo</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:18px 20px 14px;display:flex;flex-direction:column;gap:20px">
+      <sc-for list="{{ schedule }}" as="sec" hint-placeholder-count="4">
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin:0 4px 10px">
+          <div style="font-size:18px;font-weight:900;color:#23352e">{{ sec.section }}</div>
+          <div style="font-size:15px;font-weight:800;color:#1e8466;background:#eaf4f0;padding:4px 11px;border-radius:9px">{{ sec.time }}</div>
+        </div>
+
+        <sc-if value="{{ sec.empty }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff;border:1.5px dashed #dde6e2;border-radius:16px;padding:16px;text-align:center;font-size:15px;font-weight:600;color:#9fb0a9">No medication scheduled</div>
+        </sc-if>
+
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ sec.items }}" as="item" hint-placeholder-count="1">
+          <div style="background:#fff;border:1.5px solid #e7efeb;border-radius:18px;padding:15px;box-shadow:0 5px 14px rgba(20,50,40,.05)">
+            <div style="display:flex;align-items:center;gap:13px">
+              <sc-if value="{{ item.isTablet }}" hint-placeholder-val="{{ true }}">
+                <div style="flex:none;width:52px;height:52px;border-radius:14px;background:#eef3f1;display:flex;align-items:center;justify-content:center">
+                  <div style="position:relative;width:31px;height:31px;border-radius:50%;background:#fff;border:2px solid #d2dcd7">
+                    <div style="position:absolute;left:50%;top:6px;bottom:6px;width:2px;background:#d2dcd7;transform:translateX(-50%)"></div>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ item.isCapsule }}" hint-placeholder-val="{{ false }}">
+                <div style="flex:none;width:52px;height:52px;border-radius:14px;background:#eef3f1;display:flex;align-items:center;justify-content:center">
+                  <div style="width:38px;height:16px;border-radius:9px;overflow:hidden;display:flex;border:1.5px solid #d2dcd7;transform:rotate(-25deg)">
+                    <div style="flex:1;background:#e8975a"></div>
+                    <div style="flex:1;background:#fff"></div>
+                  </div>
+                </div>
+              </sc-if>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:20px;font-weight:900;line-height:1.1">{{ item.name }}</div>
+                <div style="font-size:15px;color:#7a8e86;font-weight:700;margin-top:2px">{{ item.dose }} · {{ item.time }}</div>
+              </div>
+            </div>
+
+            <sc-if value="{{ item.confirmed }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:13px;display:flex;align-items:center;gap:10px;background:#e7f5ee;border-radius:13px;padding:12px 14px">
+              <span style="flex:none;width:26px;height:26px;border-radius:50%;background:#1e8466;display:inline-flex;align-items:center;justify-content:center">
+                <span style="width:11px;height:7px;border-left:3px solid #fff;border-bottom:3px solid #fff;transform:rotate(-45deg);margin-top:-2px"></span>
+              </span>
+              <span style="font-size:16px;font-weight:800;color:#176b53">Taken · confirmed at {{ item.confirmedAt }}</span>
+            </div>
+            </sc-if>
+            <sc-if value="{{ item.pending }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ item.onConfirm }}" style="margin-top:13px;width:100%;min-height:54px;border:none;border-radius:14px;background:#1e8466;color:#fff;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px" style-active="transform:scale(.98)">
+              <span style="position:relative;width:22px;height:18px;display:inline-flex">
+                <span style="position:absolute;inset:3px 0 0;border:2.5px solid #fff;border-radius:6px"></span>
+                <span style="position:absolute;top:0;left:6px;width:10px;height:6px;border:2.5px solid #fff;border-bottom:none;border-radius:4px 4px 0 0"></span>
+                <span style="position:absolute;left:7px;top:7px;width:8px;height:8px;border:2.5px solid #fff;border-radius:50%"></span>
+              </span>
+              Confirm by Photo
+            </button>
+            </sc-if>
+          </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ CONFIRM SCAN ============ -->
+  <sc-if value="{{ isConfirmScan }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;display:flex;flex-direction:column;padding:20px 26px 28px;animation:mh-fade .4s ease">
+    <button onClick="{{ backToReminders }}" style="align-self:flex-start;border:none;background:none;padding:8px 0;font-size:17px;font-weight:700;color:#1e8466;display:flex;align-items:center;gap:7px">
+      <span style="display:inline-block;width:11px;height:11px;border-left:3px solid #1e8466;border-bottom:3px solid #1e8466;transform:rotate(45deg)"></span>
+      Back
+    </button>
+    <h1 style="font-size:27px;font-weight:900;margin:14px 0 6px;letter-spacing:-.3px">Confirm your medicine</h1>
+    <p style="font-size:18px;line-height:1.5;color:#3c544b;margin:0 0 18px">Take a photo of the <b>{{ activeName }}</b> you are about to take.</p>
+
+    <label style="display:block;cursor:pointer">
+      <input type="file" accept="image/*" capture="environment" onChange="{{ onConfirmFile }}" style="display:none">
+      <sc-if value="{{ noConfirmImg }}" hint-placeholder-val="{{ true }}">
+      <div style="border:3px dashed #bcd9cd;border-radius:24px;background:#eef7f3;padding:44px 22px;display:flex;flex-direction:column;align-items:center;text-align:center">
+        <div style="width:92px;height:92px;border-radius:26px;background:#fff;display:flex;align-items:center;justify-content:center;margin-bottom:20px;box-shadow:0 6px 16px rgba(30,132,102,.12)">
+          <span style="position:relative;width:46px;height:38px;display:inline-flex">
+            <span style="position:absolute;inset:6px 0 0;border:3.5px solid #1e8466;border-radius:9px"></span>
+            <span style="position:absolute;top:0;left:12px;width:18px;height:10px;border:3.5px solid #1e8466;border-bottom:none;border-radius:6px 6px 0 0;background:#eef7f3"></span>
+            <span style="position:absolute;left:14px;top:14px;width:16px;height:16px;border:3.5px solid #1e8466;border-radius:50%"></span>
+          </span>
+        </div>
+        <p style="margin:0 0 22px;font-size:17px;color:#5a6f67;line-height:1.4;max-width:240px">Place the pill or medicine in good light, then take the photo.</p>
+        <div style="min-height:58px;padding:0 30px;border-radius:15px;background:#1e8466;color:#fff;font-size:19px;font-weight:800;display:flex;align-items:center;gap:10px">Take Photo</div>
+      </div>
+      </sc-if>
+      <sc-if value="{{ hasConfirmImg }}" hint-placeholder-val="{{ false }}">
+      <div style="border-radius:24px;overflow:hidden;position:relative;border:3px solid #cfeadf;animation:mh-fade .35s ease">
+        {{ confirmPreviewImg }}
+        <div style="position:absolute;bottom:12px;right:12px;background:rgba(20,40,32,.78);color:#fff;font-size:14px;font-weight:700;padding:7px 13px;border-radius:11px;display:flex;align-items:center;gap:7px">
+          <span style="width:14px;height:8px;border-left:3px solid #fff;border-bottom:3px solid #fff;transform:rotate(-45deg);display:inline-block"></span>Tap to retake
+        </div>
+      </div>
+      </sc-if>
+    </label>
+
+    <sc-if value="{{ hasConfirmImg }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px">
+      <button onClick="{{ checkPhoto }}" style="width:100%;min-height:66px;border:none;border-radius:18px;background:#1e8466;color:#fff;font-size:21px;font-weight:800;box-shadow:0 10px 22px rgba(30,132,102,.32)" style-active="transform:scale(.98)">Check Photo</button>
+      <button onClick="{{ checkPhotoFail }}" style="align-self:center;border:none;background:none;color:#a9b8b1;font-size:13.5px;font-weight:700;padding:4px">Demo: show "unclear photo" result</button>
+    </div>
+    </sc-if>
+    <sc-if value="{{ noConfirmImg }}" hint-placeholder-val="{{ true }}">
+    <div style="margin-top:auto;display:flex;align-items:center;gap:9px;justify-content:center;color:#8aa097;font-size:15px;font-weight:600;padding-top:22px">
+      <span style="width:9px;height:9px;border-radius:50%;background:#cdded7"></span>Take a photo to continue
+    </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ============ CONFIRM LOADING ============ -->
+  <sc-if value="{{ isConfirmLoading }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 30px;text-align:center;animation:mh-fade .4s ease">
+    <div style="position:relative;width:96px;height:96px;margin-bottom:34px">
+      <div style="position:absolute;inset:0;border-radius:50%;border:7px solid #e3f0ec"></div>
+      <div style="position:absolute;inset:0;border-radius:50%;border:7px solid transparent;border-top-color:#1e8466;animation:mh-spin 1s linear infinite"></div>
+      <div style="position:absolute;inset:24px;border-radius:50%;background:#1e8466"></div>
+    </div>
+    <h2 style="font-size:25px;font-weight:900;margin:0 0 12px">AI is checking the photo…</h2>
+    <p style="font-size:18px;color:#5a6f67;margin:0;max-width:280px;line-height:1.5">Matching the medicine to your <b>{{ activeName }}</b> prescription.</p>
+  </div>
+  </sc-if>
+
+  <!-- ============ CONFIRM RESULT ============ -->
+  <sc-if value="{{ isConfirmResult }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;display:flex;flex-direction:column;padding:30px 26px 28px;animation:mh-fade .4s ease">
+    <sc-if value="{{ confirmOk }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+      <div style="width:120px;height:120px;border-radius:50%;background:#e7f5ee;display:flex;align-items:center;justify-content:center;margin-bottom:28px;animation:mh-pop .5s ease">
+        <span style="width:62px;height:62px;border-radius:50%;background:#1e8466;display:inline-flex;align-items:center;justify-content:center">
+          <span style="width:26px;height:15px;border-left:5px solid #fff;border-bottom:5px solid #fff;transform:rotate(-45deg);margin-top:-5px"></span>
+        </span>
+      </div>
+      <h1 style="font-size:30px;font-weight:900;margin:0 0 10px">Medication confirmed</h1>
+      <p style="font-size:20px;color:#3c544b;margin:0 0 22px;line-height:1.4">Great job. Your <b>{{ activeName }}</b> dose is logged.</p>
+      <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #e7efeb;border-radius:14px;padding:13px 18px">
+        <span style="position:relative;width:20px;height:20px;flex:none">
+          <span style="position:absolute;inset:0;border:2.5px solid #1e8466;border-radius:50%"></span>
+          <span style="position:absolute;left:9px;top:5px;width:2.5px;height:6px;border-radius:2px;background:#1e8466"></span>
+          <span style="position:absolute;left:9px;top:9px;width:5px;height:2.5px;border-radius:2px;background:#1e8466"></span>
+        </span>
+        <span style="font-size:17px;font-weight:800;color:#23352e">Confirmed at {{ confirmTime }}</span>
+      </div>
+    </div>
+    <button onClick="{{ backToReminders }}" style="width:100%;min-height:66px;border:none;border-radius:18px;background:#1e8466;color:#fff;font-size:20px;font-weight:800;box-shadow:0 10px 22px rgba(30,132,102,.3)" style-active="transform:scale(.98)">Back to Schedule</button>
+    </sc-if>
+
+    <sc-if value="{{ confirmFailed }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+      <div style="width:120px;height:120px;border-radius:50%;background:#fdeede;display:flex;align-items:center;justify-content:center;margin-bottom:28px;animation:mh-pop .5s ease">
+        <span style="width:62px;height:62px;border-radius:50%;background:#d98324;display:inline-flex;align-items:center;justify-content:center;font-size:40px;font-weight:900;color:#fff">!</span>
+      </div>
+      <h1 style="font-size:28px;font-weight:900;margin:0 0 12px">Couldn't confirm</h1>
+      <p style="font-size:19px;color:#3c544b;margin:0;line-height:1.5;max-width:300px">We could not clearly confirm the medicine. Please retake the photo in good light.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button onClick="{{ retakeConfirm }}" style="width:100%;min-height:66px;border:none;border-radius:18px;background:#1e8466;color:#fff;font-size:20px;font-weight:800;box-shadow:0 10px 22px rgba(30,132,102,.3)" style-active="transform:scale(.98)">Retake Photo</button>
+      <button onClick="{{ backToReminders }}" style="width:100%;min-height:56px;border:2px solid #cfeadf;border-radius:18px;background:#fff;color:#1e8466;font-size:18px;font-weight:800" style-active="transform:scale(.98)">Back to Schedule</button>
+    </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+</div>
+
+  <!-- ============ BOTTOM NAV ============ -->
+  <sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:none;display:flex;background:#fff;border-top:1.5px solid #e7efeb;padding:9px 14px calc(9px + env(safe-area-inset-bottom));box-shadow:0 -4px 18px rgba(20,50,40,.05)">
+    <button onClick="{{ navScan }}" style="flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;color:{{ scanTabColor }}">
+      <span style="position:relative;width:26px;height:22px;display:inline-flex">
+        <span style="position:absolute;inset:4px 0 0;border:3px solid currentColor;border-radius:7px"></span>
+        <span style="position:absolute;top:0;left:7px;width:12px;height:7px;border:3px solid currentColor;border-bottom:none;border-radius:5px 5px 0 0"></span>
+        <span style="position:absolute;left:8px;top:8px;width:10px;height:10px;border:3px solid currentColor;border-radius:50%"></span>
+      </span>
+      <span style="font-size:13px;font-weight:800">Scan</span>
+    </button>
+    <button onClick="{{ navReminders }}" style="flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;color:{{ remTabColor }}">
+      <span style="position:relative;width:24px;height:24px;display:inline-flex">
+        <span style="position:absolute;inset:0;border:3px solid currentColor;border-radius:50%"></span>
+        <span style="position:absolute;left:10px;top:6px;width:3px;height:7px;border-radius:2px;background:currentColor"></span>
+        <span style="position:absolute;left:10px;top:11px;width:6px;height:3px;border-radius:2px;background:currentColor"></span>
+      </span>
+      <span style="font-size:13px;font-weight:800">Reminders</span>
+    </button>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:430,&quot;height&quot;:880}}">
+class Component extends DCLogic {
+  state = {
+    screen: 'home', img: null, imgBase64: null, imgMimeType: null,
+    loadingStep: 0, ocrOpen: false, speakingId: null,
+    confirmImg: null, activeReminder: null, confirmed: {}, confirmOutcome: null,
+    aiMeds: null, aiOcrText: null, apiError: null,
+  };
+
+  goScan = () => this.setState({ screen: 'scan' });
+  goHome = () => this.setState({ screen: 'home' });
+  goReminders = () => this.setState({ screen: 'reminders' });
+  navScan = () => this.setState({ screen: 'home' });
+  navReminders = () => this.setState({ screen: 'reminders' });
+
+  onFile = (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const previewUrl = URL.createObjectURL(f);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const base64 = ev.target.result.split(',')[1];
+      this.setState({ img: previewUrl, imgBase64: base64, imgMimeType: f.type || 'image/jpeg' });
+    };
+    reader.readAsDataURL(f);
+  };
+
+  analyze = async () => {
+    this.clearTimers();
+    this.setState({ screen: 'loading', loadingStep: 0, apiError: null });
+    this._t1 = setTimeout(() => this.setState({ loadingStep: 1 }), 1200);
+    this._t2 = setTimeout(() => this.setState({ loadingStep: 2 }), 2400);
+
+    try {
+      const { imgBase64, imgMimeType } = this.state;
+      if (!imgBase64) throw new Error('No image data');
+
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imgBase64, imgMimeType }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || `API error ${response.status}`);
+      }
+
+      const parsed = await response.json();
+
+      clearTimeout(this._t1); clearTimeout(this._t2);
+      this.setState({ screen: 'results', aiMeds: parsed.meds || [], aiOcrText: parsed.ocrText || '' });
+
+    } catch (err) {
+      clearTimeout(this._t1); clearTimeout(this._t2);
+      console.error('Claude API error:', err);
+      this.setState({ screen: 'results', aiMeds: null, apiError: err.message });
+    }
+  };
+
+  reset = () => {
+    this.clearTimers();
+    try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
+    this.setState({ screen: 'home', img: null, imgBase64: null, imgMimeType: null, loadingStep: 0, ocrOpen: false, speakingId: null, aiMeds: null, aiOcrText: null, apiError: null });
+  };
+
+  toggleOcr = () => this.setState(s => ({ ocrOpen: !s.ocrOpen }));
+
+  speak = (med) => {
+    this.setState({ speakingId: med.id });
+    try {
+      const u = new SpeechSynthesisUtterance(med.name + '. ' + med.simple);
+      u.rate = 0.92;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+    clearTimeout(this._sp);
+    this._sp = setTimeout(() => this.setState({ speakingId: null }), 3200);
+  };
+
+  // ---- reminder confirmation flow ----
+  startConfirm = (rem) => {
+    this.clearConfirmTimers();
+    this.setState({ screen: 'confirmScan', activeReminder: rem, confirmImg: null, confirmOutcome: null });
+  };
+  onConfirmFile = (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    this.setState({ confirmImg: URL.createObjectURL(f) });
+  };
+  runCheck = (forceFail) => {
+    this.clearConfirmTimers();
+    this.setState({ screen: 'confirmLoading' });
+    this._c1 = setTimeout(() => {
+      if (forceFail) {
+        this.setState({ screen: 'confirmResult', confirmOutcome: 'fail' });
+      } else {
+        const ts = this.nowStr();
+        this.setState(st => ({
+          screen: 'confirmResult', confirmOutcome: 'success',
+          confirmed: Object.assign({}, st.confirmed, { [st.activeReminder.id]: ts }),
+        }));
+      }
+    }, 2300);
+  };
+  checkPhoto = () => this.runCheck(false);
+  checkPhotoFail = () => this.runCheck(true);
+  retakeConfirm = () => this.setState({ screen: 'confirmScan', confirmImg: null, confirmOutcome: null });
+  backToReminders = () => this.setState({ screen: 'reminders' });
+
+  nowStr() {
+    const d = new Date();
+    let h = d.getHours(); const m = d.getMinutes(); const ap = h < 12 ? 'AM' : 'PM';
+    h = h % 12; if (h === 0) h = 12;
+    return h + ':' + String(m).padStart(2, '0') + ' ' + ap;
+  }
+
+  clearTimers() { [this._t1, this._t2, this._t3, this._sp].forEach(t => clearTimeout(t)); }
+  clearConfirmTimers() { clearTimeout(this._c1); }
+  componentWillUnmount() { this.clearTimers(); this.clearConfirmTimers(); }
+
+  renderVals() {
+    const s = this.state;
+    const scanGroup = ['home', 'scan', 'loading', 'results'].includes(s.screen);
+    const remGroup = ['reminders', 'confirmScan', 'confirmLoading', 'confirmResult'].includes(s.screen);
+
+    const stepDefs = ['Reading the text…', 'Understanding the medicine…', 'Simplifying instructions…'];
+    const steps = stepDefs.map((label, i) => {
+      const done = i < s.loadingStep, active = i === s.loadingStep;
+      return { label, done, active, bg: (done || active) ? '#1e8466' : '#dfeae5', color: (done || active) ? '#23352e' : '#9fb0a9' };
+    });
+
+    const mk = (id, name, when, dosage, simple, confidence, pill) => {
+      const med = { id, name, when, dosage, simple, confidence };
+      med.isTablet = pill === 'tablet';
+      med.isCapsule = pill === 'capsule';
+      med.speaking = s.speakingId === id;
+      med.idle = s.speakingId !== id;
+      med.onSpeak = () => this.speak(med);
+      return med;
+    };
+
+    // ---- Build medication groups from AI result or fall back to demo data ----
+    const buildGroups = (aiMeds) => {
+      if (!aiMeds) {
+        // fallback demo data
+        return [
+          {
+            time: 'Morning', sub: 'After breakfast', badgeBg: '#fbeede', isMorning: true, isEvening: false,
+            meds: [
+              mk('met-am', 'Metformin', '1 tablet after breakfast', '500 mg', 'Take one tablet after you finish breakfast. It helps control your blood sugar.', 'Please confirm the timing with your pharmacist.', 'tablet'),
+              mk('aml-am', 'Amlodipine', '1 tablet in the morning', '5 mg', 'Take one tablet in the morning. It helps keep your blood pressure steady.', 'Do not stop taking it without asking your doctor.', 'capsule'),
+            ],
+          },
+          {
+            time: 'Evening', sub: 'After dinner', badgeBg: '#e7eaf6', isMorning: false, isEvening: true,
+            meds: [
+              mk('met-pm', 'Metformin', '1 tablet after dinner', '500 mg', 'Take one tablet after you finish dinner — the same medicine as the morning.', 'Please confirm the timing with your pharmacist.', 'tablet'),
+            ],
+          },
+        ];
+      }
+
+      const inferTimeOfDay = (timeOfDay, when) => {
+        const raw = ((timeOfDay || '') + ' ' + (when || '')).toLowerCase();
+        if (/morning|breakfast|\bam\b|早/.test(raw))        return 'morning';
+        if (/noon|lunch|midday|afternoon|中午/.test(raw))   return 'noon';
+        if (/evening|dinner|night|\bpm\b|晚/.test(raw))    return 'evening';
+        if (/bed|sleep|睡前/.test(raw))                     return 'bedtime';
+        return 'other';
+      };
+
+      const timeConfig = {
+        morning:  { time: 'Morning',  sub: 'After breakfast', badgeBg: '#fbeede', isMorning: true,  isEvening: false },
+        noon:     { time: 'Noon',     sub: 'After lunch',     badgeBg: '#e8f4e8', isMorning: false, isEvening: false },
+        evening:  { time: 'Evening',  sub: 'After dinner',    badgeBg: '#e7eaf6', isMorning: false, isEvening: true  },
+        bedtime:  { time: 'Bedtime',  sub: 'Before sleep',    badgeBg: '#ece7f6', isMorning: false, isEvening: false },
+        other:    { time: 'Other',    sub: 'As directed',     badgeBg: '#f0f0f0', isMorning: false, isEvening: false },
+      };
+
+      const buckets = {};
+      aiMeds.forEach((m, i) => {
+        const key = inferTimeOfDay(m.timeOfDay, m.when);
+        const bucket = timeConfig[key] || timeConfig.other;
+        if (!buckets[key]) buckets[key] = { ...bucket, meds: [] };
+        buckets[key].meds.push(mk(m.id || ('med-' + i), m.name, m.when, m.dosage, m.simple, m.confidence, m.pill || 'tablet'));
+      });
+
+      const order = ['morning', 'noon', 'evening', 'bedtime', 'other'];
+      return order.filter(k => buckets[k]).map(k => buckets[k]);
+    };
+
+    const groups = buildGroups(s.aiMeds);
+
+    const rem = (id, name, dose, time, pill) => {
+      const r = { id, name, dose, time, pill };
+      const item = { id, name, dose, time };
+      item.isTablet = pill === 'tablet';
+      item.isCapsule = pill === 'capsule';
+      const ts = s.confirmed[id];
+      item.confirmed = !!ts;
+      item.pending = !ts;
+      item.confirmedAt = ts || '';
+      item.onConfirm = () => this.startConfirm(r);
+      return item;
+    };
+
+    const inferSched = (timeOfDay, when) => {
+      const raw = ((timeOfDay || '') + ' ' + (when || '')).toLowerCase();
+      if (/morning|breakfast|\bam\b|早/.test(raw))       return { section: 'Morning · after meal',  time: '8:00 AM'  };
+      if (/noon|lunch|midday|afternoon|中午/.test(raw))  return { section: 'Noon · after meal',     time: '12:30 PM' };
+      if (/evening|dinner|night|\bpm\b|晚/.test(raw))   return { section: 'Evening · after meal',  time: '7:00 PM'  };
+      if (/bed|sleep|睡前/.test(raw))                    return { section: 'Before bed',            time: '10:00 PM' };
+      return { section: 'As directed', time: '' };
+    };
+
+    const sectionOrder = ['Morning · after meal', 'Noon · after meal', 'Evening · after meal', 'Before bed', 'As directed'];
+    const schedBuckets = {};
+    sectionOrder.forEach(sec => { schedBuckets[sec] = { section: sec, time: '', items: [] }; });
+
+    if (s.aiMeds && s.aiMeds.length > 0) {
+      s.aiMeds.forEach((m, i) => {
+        const { section, time } = inferSched(m.timeOfDay, m.when);
+        if (!schedBuckets[section]) schedBuckets[section] = { section, time, items: [] };
+        schedBuckets[section].time = schedBuckets[section].time || time;
+        schedBuckets[section].items.push(['r-' + (m.id || i), m.name, m.dosage, time, m.pill || 'tablet']);
+      });
+    } else {
+      // fallback demo
+      schedBuckets['Morning · after meal'].items = [['r-met-am', 'Metformin', '500 mg', '8:00 AM', 'tablet'], ['r-aml-am', 'Amlodipine', '5 mg', '8:00 AM', 'capsule']];
+      schedBuckets['Morning · after meal'].time = '8:00 AM';
+      schedBuckets['Evening · after meal'].items = [['r-met-pm', 'Metformin', '500 mg', '7:00 PM', 'tablet']];
+      schedBuckets['Evening · after meal'].time = '7:00 PM';
+    }
+
+    const scheduleDefs = sectionOrder.map(sec => schedBuckets[sec]).filter(d => d);
+    const schedule = scheduleDefs.map(d => ({
+      section: d.section, time: d.time, empty: d.items.length === 0,
+      items: d.items.map(a => rem(a[0], a[1], a[2], a[3], a[4])),
+    }));
+
+    const allItems = scheduleDefs.flatMap(d => d.items.map(a => a[0]));
+    const total = allItems.length;
+    const taken = allItems.filter(id => s.confirmed[id]).length;
+
+    const ocrText = s.aiOcrText ||
+      'RX# 4892173        DATE: 06/18/2026\n' +
+      'PATIENT: M. ELDER\n' +
+      '----------------------------------\n' +
+      'METFORMIN HCL 500MG TAB\n' +
+      'TAKE 1 TAB PO BID W/ MEALS\n' +
+      'QTY 60   REFILLS: 3\n' +
+      '----------------------------------\n' +
+      'AMLODIPINE 5MG TAB\n' +
+      'TAKE 1 TAB PO QD IN AM\n' +
+      'QTY 30   REFILLS: 3\n' +
+      '----------------------------------\n' +
+      'PO=by mouth  BID=twice daily\n' +
+      'QD=once daily  AM=morning';
+
+    const active = s.activeReminder;
+
+    return {
+      isHome: s.screen === 'home',
+      isScan: s.screen === 'scan',
+      isLoading: s.screen === 'loading',
+      isResults: s.screen === 'results',
+      isReminders: s.screen === 'reminders',
+      isConfirmScan: s.screen === 'confirmScan',
+      isConfirmLoading: s.screen === 'confirmLoading',
+      isConfirmResult: s.screen === 'confirmResult',
+
+      goScan: this.goScan, goHome: this.goHome, goReminders: this.goReminders,
+      navScan: this.navScan, navReminders: this.navReminders,
+      onFile: this.onFile, analyze: this.analyze, reset: this.reset, toggleOcr: this.toggleOcr,
+      onConfirmFile: this.onConfirmFile, checkPhoto: this.checkPhoto, checkPhotoFail: this.checkPhotoFail,
+      retakeConfirm: this.retakeConfirm, backToReminders: this.backToReminders,
+
+      previewImg: s.img ? React.createElement('img', { src: s.img, alt: 'Prescription', style: { display: 'block', width: '100%', height: '300px', objectFit: 'cover' } }) : null,
+      hasImg: !!s.img, noImg: !s.img,
+      confirmPreviewImg: s.confirmImg ? React.createElement('img', { src: s.confirmImg, alt: 'Medicine', style: { display: 'block', width: '100%', height: '300px', objectFit: 'cover' } }) : null,
+      hasConfirmImg: !!s.confirmImg, noConfirmImg: !s.confirmImg,
+
+      steps, groups, schedule,
+      ocrOpen: s.ocrOpen, ocrCaret: s.ocrOpen ? 'rotate(-135deg)' : 'rotate(45deg)', ocrText,
+      medCountLabel: s.aiMeds ? (s.aiMeds.length + ' medicine' + (s.aiMeds.length !== 1 ? 's' : '') + ' · grouped by when to take them') : '2 medicines · grouped by when to take them',
+      apiError: s.apiError,
+
+      todayDate: new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+      takenLabel: taken + '/' + total,
+      progressTitle: taken === total ? 'All doses taken' : (taken + ' of ' + total + ' doses taken'),
+      progressRightColor: taken >= 2 ? '#1e8466' : 'transparent',
+
+      activeName: active ? active.name : 'medicine',
+      confirmOk: s.confirmOutcome === 'success',
+      confirmFailed: s.confirmOutcome === 'fail',
+      confirmTime: active ? (s.confirmed[active.id] || this.nowStr()) : this.nowStr(),
+
+      showNav: ['home', 'results', 'reminders'].includes(s.screen),
+      scanTabColor: scanGroup ? '#1e8466' : '#9fb0a9',
+      remTabColor: remGroup ? '#1e8466' : '#9fb0a9',
+    };
+  }
+}
+</script>
+</body>
+</html>
